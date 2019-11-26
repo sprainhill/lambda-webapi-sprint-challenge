@@ -1,0 +1,23 @@
+const express = require("express");
+const helmet = require("helmet");
+
+const Shoutouts = require("../data/shoutouts-model.js");
+
+const server = express();
+
+server.use(helmet());
+server.use(express.json()); // lets express parse JSON from req.body
+
+server.get("/", (req, res) => {
+  Shoutouts.find()
+    .then(shoutouts => {
+      const messageOfTheDay = process.env.MOTD || "Hello World!";
+      res.status(200).json({ motd: messageOfTheDay, shoutouts });
+    })
+    .catch(error => {
+      console.error("\nERROR", error);
+      res.status(500).json({ error: "Cannot retrieve the shoutouts" });
+    });
+});
+
+
